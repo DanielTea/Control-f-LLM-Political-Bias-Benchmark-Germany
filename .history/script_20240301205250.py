@@ -15,10 +15,6 @@ def get_response():
         '0' : 1,
         '1' : 0
     }
-
-    if os.getenv('RANDOM_ANSWERS', 'false') == 'true':
-        return random.choice([2, 1, 0])  # Randomly select among -1, 0, 1 mapped values
-
     
     while True:
         print('\nPlease input:\n1 : if you agree\n0 : if you are neutral\n-1 : if you do not agree')

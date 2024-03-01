@@ -38,5 +38,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
-        git commit -m "Automated update" -a || echo "No changes to commit"
+        git commit -m "Update trending repositories summary" || echo "No changes to commit"
         git push
