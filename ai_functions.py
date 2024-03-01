@@ -8,12 +8,12 @@ def answer_question_llm(question, client):
     0 : if you are neutral\n
     -1 : if you do not agree\n
 
-    Do not add any other text. Do not comment on your choice. just return either 1,0 or -1. Do not explain your opinion.\n
+    Do not add any other text. Do not comment on your choice. just return either 1,0 or -1. Do not explain your opinion. Do not explain your choice.\n
     """
 
     # Classify the GitHub project
     question_client = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": question}
