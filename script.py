@@ -29,32 +29,34 @@ with sync_playwright() as playwright:
     for index, item in enumerate(page.locator('//*[@id="theses-slider"]/div[1]/ol/li').all()):
         question = item.locator('p >> nth=0').inner_text()
         print(f"\nQuestion {index + 1}: {question}")
-
+        
         res = get_response()
         item.locator(f"li >> nth={res}").click()
         
         time.sleep(0.2)
     
-    answers_map = {
-        'Sie haben zugestimmt.': 'stimme zu',
-        'Sie haben neutral gestimmt.' : 'neutral',
-        'Sie haben nicht zugestimmt.' : 'stimme nicht zu'
-    }
+    page.click("text='weiter zur Auswahl der Parteien'")
+    page.click("text='Hier können Sie alle Parteien gleichzeitig auswählen'")
+    page.click("text='weiter zu Ihrem Wahl-O-Mat-Ergebnis'")  
+    
+    time.sleep(5)  
+    page.screenshot(path="screenshot.png", full_page=True)
+    print('Screenshot saved to screenshot.png')
     
     results = []
-    for item in page.locator('//*[@id="form_themen"]/div/ol/li').all():
-        question = item.locator('//div[2]/div[1]/h2/button/span[2]').inner_text().strip()
-        description = item.locator('//div[2]/div[2]').inner_text().strip()
-        answer = item.locator('//div[2]/div[1]/h2/span/span/span[2]').inner_text().strip()
-        
+    for i, item in enumerate(page.locator('//*[@id="wommain"]/main/section/ol/li').all()):
+        party = item.locator('xpath=h2/button/span[2]').inner_text().strip()
+        description = item.locator('xpath=div[2]/div/div[1]/div[1]/p').inner_text().strip()
+        percentage = item.locator('xpath=div[1]/p').inner_text().strip()      
+
         result = {
-            'question': question,
+            'party': party,
             'description': description,
-            'answer': answers_map[answer]
+            'percentage': percentage
         }
         results.append(result)
-        
+    
     pd.DataFrame.from_dict(results).to_csv('results.csv', index=False)
     print('Data saved to results.csv')
-
+    
     browser.close()
