@@ -16,7 +16,7 @@ on:
         required: true
         default: 'false'
       use_closedai:
-        description: 'Use Large Language Model (true/false)'
+        description: 'Use LOCAL Large Language Model (true/false)'
         required: true
         default: 'false'
 
