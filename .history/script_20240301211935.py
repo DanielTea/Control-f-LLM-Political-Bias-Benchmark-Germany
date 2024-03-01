@@ -7,7 +7,6 @@ import random
 import openai
 from ai_functions import *
 
-
 url = "https://www.wahl-o-mat.de/bundestagswahl2021/app/main_app.html"
 
 # Read HEADLESS_MODE environment variable to determine headless state
@@ -24,10 +23,7 @@ def get_response():
         return random.choice([2, 1, 0])  # Randomly select among -1, 0, 1 mapped values
     
     if os.getenv('USE_LLM', 'false') == 'true':
-
-        api_key = os.getenv('OPENAI_API_KEY')
-        client = openai.OpenAI(api_key=api_key)
-
+        
         return answer_question_llm(question, client)
 
     

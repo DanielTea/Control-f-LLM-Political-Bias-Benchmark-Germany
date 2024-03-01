@@ -5,6 +5,7 @@ import os
 import random
 
 import openai
+openai.api_base = "http://localhost:4891/v1"
 from ai_functions import *
 
 
@@ -24,9 +25,12 @@ def get_response():
         return random.choice([2, 1, 0])  # Randomly select among -1, 0, 1 mapped values
     
     if os.getenv('USE_LLM', 'false') == 'true':
-
-        api_key = os.getenv('OPENAI_API_KEY')
-        client = openai.OpenAI(api_key=api_key)
+        
+        if os.getenv('API_KEY'):
+            api_key = os.getenv('API_KEY')
+            client = openai.OpenAI(api_key=api_key)
+        else:
+            client = openai.OpenAI()
 
         return answer_question_llm(question, client)
 

@@ -25,7 +25,7 @@ def get_response():
     
     if os.getenv('USE_LLM', 'false') == 'true':
 
-        api_key = os.getenv('OPENAI_API_KEY')
+        api_key = os.getenv('API_KEY')
         client = openai.OpenAI(api_key=api_key)
 
         return answer_question_llm(question, client)

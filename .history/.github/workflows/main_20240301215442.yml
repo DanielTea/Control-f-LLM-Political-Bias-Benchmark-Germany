@@ -34,7 +34,7 @@ jobs:
         HEADLESS_MODE: ${{ github.event.inputs.headless_mode }}
         RANDOM_ANSWERS: ${{ github.event.inputs.random_answers }}
         USE_LLM: ${{ github.event.inputs.use_llm }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        API
       run: |
         chmod +x ./start.sh
         ./start.sh
