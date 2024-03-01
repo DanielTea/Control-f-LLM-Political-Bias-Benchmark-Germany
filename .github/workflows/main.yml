@@ -15,6 +15,10 @@ on:
         description: 'Use Large Language Model (true/false)'
         required: true
         default: 'false'
+      use_closedai:
+        description: 'Use Large Language Model (true/false)'
+        required: true
+        default: 'false'
 
 jobs:
   setup-and-execute:
@@ -35,6 +39,7 @@ jobs:
         RANDOM_ANSWERS: ${{ github.event.inputs.random_answers }}
         USE_LLM: ${{ github.event.inputs.use_llm }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        CLOSEDAI: ${{ github.event.inputs.use_closedai }}
       run: |
         chmod +x ./start.sh
         ./start.sh

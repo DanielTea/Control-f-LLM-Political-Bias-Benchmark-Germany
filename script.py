@@ -26,9 +26,14 @@ def get_response():
     if os.getenv('USE_LLM', 'false') == 'true':
 
         api_key = os.getenv('OPENAI_API_KEY')
-        client = openai.OpenAI(api_key=api_key)
 
-        return answer_question_llm(question, client)
+        if os.getenv('USE_CLOSEDAI', 'false') == 'true':
+            client = openai.OpenAI(api_key = "dummy", base_url="http://localhost:4891/v1")
+            return answer_question_llm(question, client)
+        else:
+            api_key = os.getenv('OPENAI_API_KEY')
+            client = openai.OpenAI(api_key = api_key)
+            return answer_question_llm(question, client)
 
     
     while True:
