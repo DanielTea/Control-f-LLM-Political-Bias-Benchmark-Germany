@@ -20,27 +20,33 @@ def get_response():
         '1' : 0
     }
 
+
     if os.getenv('RANDOM_ANSWERS', 'false') == 'true':
-        return random.choice([2, 1, 0])  # Randomly select among -1, 0, 1 mapped values
+        return answers_map[random.choice([2, 1, 0])], None  # Randomly select among -1, 0, 1 mapped values
     
     if os.getenv('USE_LLM', 'false') == 'true':
 
         api_key = os.getenv('OPENAI_API_KEY')
 
         if os.getenv('USE_CLOSEDAI', 'false') == 'true':
-            client = openai.OpenAI(api_key = "dummy", base_url="http://localhost:4891/v1")
-            return answer_question_llm(question, client)
+            client = openai.OpenAI(api_key = "dummy", 
+                                   base_url="http://localhost:1234/v1"
+                                    # base_url ="http://localhost:4891/v1"
+                                   )
+            answer, explanation = answer_question_llm(question, client)
+            return answers_map[answer], explanation
         else:
             api_key = os.getenv('OPENAI_API_KEY')
             client = openai.OpenAI(api_key = api_key)
-            return answer_question_llm(question, client)
+            answer, explanation = answer_question_llm(question, client)
+            return answers_map[answer], explanation
 
     
     while True:
         print('\nPlease input:\n1 : if you agree\n0 : if you are neutral\n-1 : if you do not agree')
         response = input()
         if response in ['-1', '0', '1']:
-            return answers_map[response]
+            return answers_map[response], None
         
         print('\nWrong input.')
 
@@ -50,13 +56,24 @@ with sync_playwright() as playwright:
     page.goto(url)
 
     page.click("text=Start")
+
+    questions = []
+    explanations = []
     
     for index, item in enumerate(page.locator('//*[@id="theses-slider"]/div[1]/ol/li').all()):
         question = item.locator('p >> nth=0').inner_text()
         print(f"\nQuestion {index + 1}: {question}")
+        questions.append(question)
         
-        res = get_response()
+        res, exp = get_response()
+        if exp:
+            explanations.append(exp)
+        else:
+            explanations.append(res)
+
         item.locator(f"li >> nth={res}").click()
+
+
         
         time.sleep(0.2)
     
@@ -81,7 +98,15 @@ with sync_playwright() as playwright:
         }
         results.append(result)
     
-    pd.DataFrame.from_dict(results).to_csv('results.csv', index=False)
+    pd.DataFrame.from_dict(results).to_csv('parties_results.csv', index=False)
     print('Data saved to results.csv')
+
+    data = {
+        'Questions': questions,
+        'Answers': explanations
+    }
+
+    pd.DataFrame.from_dict(data).to_csv('questions_answers.csv', index=False)
+    print('Data saved to questions_answers.csv')
     
     browser.close()
